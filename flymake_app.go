@@ -33,7 +33,7 @@ func handleResult(w http.ResponseWriter, r *http.Request) {
 
 	from := r.FormValue("from")
 	to := r.FormValue("to")
-	result := breadthFirstSearch(from, to, tracks)
+	result := breadthFirstSeatch(from, to, tracks)
 
 	tmpl := template.Must(template.ParseFiles("./result.html"))
 	tmpl.Execute(w, result)
