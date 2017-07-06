@@ -1,45 +1,53 @@
 <html lang="ja">
-  <head>
-    <meta charset="UTF-8">
-    <title>Train Guidance</title>
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <link href="./stylesheets/style.css" rel="stylesheet">
-  </head>
+    <head>
+	<meta charset="UTF-8">
+	<title>Train Guidance</title>
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<link href="./stylesheets/style.css" rel="stylesheet">
+    </head>
 
   <body>
-    <div class="container">
-      <h1 class="text-left">Train Guidance</h1>
-    </div>
+    <header class="header">
+	<div class="container">
+	    <h1 class="text-left">Train Guidance</h1>
+	</div>
+    </header>
 
     <div class="container">
-      <form class="text-left">
-	<div class="form-group">
-	  <label>From</label>
-	  <input type="text" class="form-control" name="from" list="station" />
-	</div>
-	<div class="form-group">
-	  <label>To</label>
-	  <input type="text" class="form-control" name="to" list="station" />
-	</div>
-	<div class="text-center">
-	  <button class="btn btn-lg btn-primary" type="submit">submit</button>
-	</div>
-      </form>
+	<form class="text-left">
+	    <div class="form-group">
+		<label>From</label>
+		<input type="text" class="form-control" name="from" list="station" />
+	    </div>
+	    <div class="form-group">
+		<label>To</label>
+		<input type="text" class="form-control" name="to" list="station" />
+	    </div>
+	    <div class="text-center">
+		<button class="btn btn-lg btn-primary" type="submit">Search</button>
+	    </div>
+	</form>
     </div>
 
     <datalist id="station">
-      <option value="品川">
-      <option value="大崎">
-      <option value="五反田">
-      <option value="目黒">
+	<option value="品川"></option>
+	<option value="大崎"></option>
+	<option value="五反田"></option>
+	<option value="目黒"></option>
     </datalist>
 
-    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script> -->
-    <!-- <script> -->
-      <!-- $( function() { -->
-      <!-- //inputタグにlist属性とその値"keyword"を設定する -->
-      <!-- $( 'input[name="name"]' ).attr('list', 'keyword'); -->
-      <!-- } ); -->
-    <!-- </script> -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script>
+     $(function() {
+	 $.getJSON("http://tokyo.fantasy-transit.appspot.com/net?format=json", function(data){
+	     /* var datalist = $("#station");*/
+	     /* var len = data.length;*/
+	     /* */
+	     /* for(var i = 0; i < len; i++) {*/
+	     /* datalist.append($("<option>").attr({"value":data[i].Stations});*/
+	     /* }*/
+	 });
+     });
+    </script>
   </body>
 </html>

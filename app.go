@@ -1,18 +1,19 @@
 package app
 
 import (
+	"fmt"
+	"google.golang.org/appengine"
+	"google.golang.org/appengine/urlfetch"
 	"html/template"
 	"net/http"
-	// "google.golang.org/appengine"
-	// "google.golang.org/appengine/urlfetch"
 )
 
 func init() {
 	http.Handle("./stylesheets/", http.StripPrefix("./stylesheets/", http.FileServer(http.Dir("./stylesheets/"))))
-	http.HandleFunc("/", handlePata)
+	http.HandleFunc("/", handler)
 }
 
-func handlePata(w http.ResponseWriter, r *http.Request) {
+func handler(w http.ResponseWriter, r *http.Request) {
 	// ctx := appengine.NewContext(r)
 	// client := urlfetch.Client(ctx)
 	// resp, err := client.Get("http://tokyo.fantasy-transit.appspot.com/net?format=json")
@@ -21,10 +22,13 @@ func handlePata(w http.ResponseWriter, r *http.Request) {
 	// return
 	// }
 	// fmt.Fprintf(w, "HTTP GET returned status %v", resp.Status)
+	c := appengine.NewContext(r)
+	client := urlfetch.Client(c)
+	resp, _ := client.Get("http://www.google.com/")
 
-	a := r.FormValue("a")
-	b := r.FormValue("b")
-	result := combine(a, b)
+	from := r.FormValue("from")
+	to := r.FormValue("to")
+	result := combine(from, to)
 	tmpl := template.Must(template.ParseFiles("./index.html"))
 	tmpl.Execute(w, result)
 }
