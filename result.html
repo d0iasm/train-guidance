@@ -15,9 +15,18 @@
 	</header>
 
 
-	<div class="container result">
-	    <span>result: </span>{{ . }}
-	</div>
+	<ul class="container list-group" id="result"></ul>
 
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script>
+	 $(function() {
+	     var path = {{ . }}
+	     var result= $("#result")
+	     result.append('<li class="list-group-item active">from: '+path[0]+', to: '+path[path.length-1]+'</li>')
+	     for(var i=0; i<path.length; i++){
+		 result.append('<li class="list-group-item">'+path[i]+'</li>')
+	     }
+	 });
+	</script>
     </body>
 </html>
