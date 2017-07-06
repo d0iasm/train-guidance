@@ -1,7 +1,6 @@
 package app
 
 import (
-	// "fmt"
 	"container/list"
 	"encoding/json"
 	"google.golang.org/appengine"
@@ -9,6 +8,7 @@ import (
 	"html/template"
 	"io/ioutil"
 	"net/http"
+	"strings"
 )
 
 type Track struct {
@@ -32,7 +32,11 @@ func handleResult(w http.ResponseWriter, r *http.Request) {
 	tracks := getTracks(w, r)
 
 	from := r.FormValue("from")
+	froms := strings.Split(from, "-")
+	from = froms[len(froms)-1]
 	to := r.FormValue("to")
+	tos := strings.Split(to, "-")
+	to = tos[len(froms)-1]
 	result := breadthFirstSearch(from, to, tracks)
 
 	tmpl := template.Must(template.ParseFiles("./result.html"))
@@ -59,14 +63,29 @@ func getTracks(w http.ResponseWriter, r *http.Request) []Track {
 	return tracks
 }
 
+func contains(arr []string, str string) bool {
+	for _, v := range arr {
+		if v == str {
+			return true
+		}
+	}
+	return false
+}
+
 func makeAdjacentMap(tracks []Track) map[string][]string {
 	adjacent := map[string][]string{}
 	for _, track := range tracks {
 		for i, station := range track.Stations {
 			if i > 0 {
+				if contains(adjacent[station], track.Stations[i-1]) {
+					continue
+				}
 				adjacent[station] = append(adjacent[station], string(track.Stations[i-1]))
 			}
 			if i < len(track.Stations)-1 {
+				if contains(adjacent[station], track.Stations[i+1]) {
+					continue
+				}
 				adjacent[station] = append(adjacent[station], string(track.Stations[i+1]))
 			}
 		}
@@ -75,7 +94,6 @@ func makeAdjacentMap(tracks []Track) map[string][]string {
 }
 
 func breadthFirstSearch(from, to string, tracks []Track) []string {
-	// path := []string{}
 	adjacent := makeAdjacentMap(tracks)
 	queue := list.New()
 	queue.PushBack([]string{from})
@@ -83,13 +101,14 @@ func breadthFirstSearch(from, to string, tracks []Track) []string {
 	path := []string{}
 	for queue.Len() > 0 {
 		path, _ = queue.Remove(queue.Front()).([]string)
-		// path = append(path, current)
 		current = path[len(path)-1]
 		if current == to {
 			return path
 		}
-		for _, nextStation := range adjacent[current] {
-			queue.PushBack(append(path, nextStation))
+		for _, next := range adjacent[current] {
+			if !contains(path, next) {
+				queue.PushBack(append(path, next))
+			}
 		}
 	}
 	return nil

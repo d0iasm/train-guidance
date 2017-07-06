@@ -39,7 +39,10 @@
 	 var datalist = $("#station")
 	 for(var i=0; i<tracks.length; i++){
 	     for(var j=0; j<tracks[i]["Stations"].length; j++){
-		 datalist.append($("<option>").attr({"value": tracks[i]["Stations"][j]}))
+		 datalist.append($("<option>").attr({
+		     "label": tracks[i]["Name"],
+		     "value": tracks[i]["Stations"][j]
+		 }))
 	     }
 	 }
      });
