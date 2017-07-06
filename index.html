@@ -9,12 +9,13 @@
   <body>
     <header class="header">
 	<div class="container">
-	    <h1 class="text-left">Train Guidance</h1>
+	    <h1 class="text-left col-xs-10 col-sm-11">Train Guidance</h1>
+	    <a class="btn btn-default pull-right col-xs-2 col-sm-1 margin-top-20" href="http://tokyo.fantasy-transit.appspot.com/map">map</a>
 	</div>
     </header>
 
     <div class="container">
-	<form class="text-left">
+	<form class="text-left" action="./result">
 	    <div class="form-group">
 		<label>From</label>
 		<input type="text" class="form-control" name="from" list="station" />
@@ -29,24 +30,18 @@
 	</form>
     </div>
 
-    <datalist id="station">
-	<option value="品川"></option>
-	<option value="大崎"></option>
-	<option value="五反田"></option>
-	<option value="目黒"></option>
-    </datalist>
+    <datalist id="station"></datalist>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script>
      $(function() {
-	 $.getJSON("http://tokyo.fantasy-transit.appspot.com/net?format=json", function(data){
-	     /* var datalist = $("#station");*/
-	     /* var len = data.length;*/
-	     /* */
-	     /* for(var i = 0; i < len; i++) {*/
-	     /* datalist.append($("<option>").attr({"value":data[i].Stations});*/
-	     /* }*/
-	 });
+	 var tracks = {{ . }}
+	 var datalist = $("#station")
+	 for(var i=0; i<tracks.length; i++){
+	     for(var j=0; j<tracks[i]["Stations"].length; j++){
+		 datalist.append($("<option>").attr({"value": tracks[i]["Stations"][j]}))
+	     }
+	 }
      });
     </script>
   </body>
