@@ -2,6 +2,7 @@ package app
 
 import (
 	// "fmt"
+	"container/list"
 	"encoding/json"
 	"google.golang.org/appengine"
 	"google.golang.org/appengine/urlfetch"
@@ -58,10 +59,38 @@ func getTracks(w http.ResponseWriter, r *http.Request) []Track {
 	return tracks
 }
 
-func breadthFirstSeatch(from, to string, tracks []Track) []string {
-	path := []string{}
+func makeAdjacentMap(tracks []Track) map[string][]string {
+	adjacent := map[string][]string{}
 	for _, track := range tracks {
-		path = append(path, string(track.Name))
+		for i, station := range track.Stations {
+			if i > 0 {
+				adjacent[station] = append(adjacent[station], string(track.Stations[i-1]))
+			}
+			if i < len(track.Stations)-1 {
+				adjacent[station] = append(adjacent[station], string(track.Stations[i+1]))
+			}
+		}
 	}
-	return path
+	return adjacent
+}
+
+func breadthFirstSeatch(from, to string, tracks []Track) []string {
+	// path := []string{}
+	adjacent := makeAdjacentMap(tracks)
+	queue := list.New()
+	queue.PushBack([]string{from})
+	current := ""
+	path := []string{}
+	for queue.Len() > 0 {
+		path, _ = queue.Remove(queue.Front()).([]string)
+		// path = append(path, current)
+		current = path[len(path)-1]
+		if current == to {
+			return path
+		}
+		for _, nextStation := range adjacent[current] {
+			queue.PushBack(append(path, nextStation))
+		}
+	}
+	return nil
 }
