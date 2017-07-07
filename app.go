@@ -32,11 +32,7 @@ func handleResult(w http.ResponseWriter, r *http.Request) {
 	tracks := getTracks(w, r)
 
 	from := r.FormValue("from")
-	froms := strings.Split(from, "-")
-	from = froms[len(froms)-1]
 	to := r.FormValue("to")
-	tos := strings.Split(to, "-")
-	to = tos[len(froms)-1]
 	result := breadthFirstSearch(from, to, tracks)
 
 	tmpl := template.Must(template.ParseFiles("./result.html"))
