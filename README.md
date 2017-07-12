@@ -1,3 +1,7 @@
+# train-guidance
+Where to switch trains.
+https://train-guidance.appspot.com/
+
 # debugging train-guidance
 
 Example of how to debug this kind of issue using `log.Infof` to print the status
