@@ -110,11 +110,10 @@ func breadthFirstSearch(ctx context.Context, from, to string, tracks []Track) []
 	for queue.Len() > 0 {
 		path, _ = queue.Remove(queue.Front()).([]string)
 		log.Infof(ctx, "dequed: %v remaining: %v", path, scanQueue())
-		current = path[len(path)-1]
-		if current == to {
-			return path
-		}
 		for _, next := range adjacent[current] {
+			if next == to {
+				return append(path, next)
+			}
 			if !contains(path, next) {
 				log.Infof(ctx, "+ adding %v + %v to queue", path, next)
 				new := make([]string, (len(path)))
