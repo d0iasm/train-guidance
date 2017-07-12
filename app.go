@@ -117,7 +117,9 @@ func breadthFirstSearch(ctx context.Context, from, to string, tracks []Track) []
 		for _, next := range adjacent[current] {
 			if !contains(path, next) {
 				log.Infof(ctx, "+ adding %v + %v to queue", path, next)
+				// TODO: same path address!!!
 				queue.PushBack(append(path, next))
+				log.Infof(ctx, "+ want to add: %v", append(path, next))
 				log.Infof(ctx, " = resulting queue: %v", scanQueue())
 			}
 		}
