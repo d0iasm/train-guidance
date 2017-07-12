@@ -1,5 +1,5 @@
 # train-guidance
-Where to switch trains.
+Where to switch trains.  
 https://train-guidance.appspot.com/
 
 # debugging train-guidance
