@@ -2,13 +2,15 @@ package app
 
 import (
 	"container/list"
+	"context"
 	"encoding/json"
-	"google.golang.org/appengine"
-	"google.golang.org/appengine/urlfetch"
 	"html/template"
 	"io/ioutil"
 	"net/http"
-	"strings"
+
+	"google.golang.org/appengine"
+	"google.golang.org/appengine/log"
+	"google.golang.org/appengine/urlfetch"
 )
 
 type Track struct {
@@ -29,11 +31,12 @@ func handleSearch(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleResult(w http.ResponseWriter, r *http.Request) {
+	ctx := appengine.NewContext(r)
 	tracks := getTracks(w, r)
 
 	from := r.FormValue("from")
 	to := r.FormValue("to")
-	result := breadthFirstSearch(from, to, tracks)
+	result := breadthFirstSearch(ctx, from, to, tracks)
 
 	tmpl := template.Must(template.ParseFiles("./result.html"))
 	tmpl.Execute(w, result)
@@ -89,21 +92,33 @@ func makeAdjacentMap(tracks []Track) map[string][]string {
 	return adjacent
 }
 
-func breadthFirstSearch(from, to string, tracks []Track) []string {
+func breadthFirstSearch(ctx context.Context, from, to string, tracks []Track) []string {
 	adjacent := makeAdjacentMap(tracks)
 	queue := list.New()
 	queue.PushBack([]string{from})
 	current := ""
 	path := []string{}
+	log.Infof(ctx, "BFS(%v, %v)", from, to)
+	// adding a short debugging function to dump the contents of queue to a []string
+	scanQueue := func() (res [][]string) {
+		for e := queue.Front(); e != nil; e = e.Next() {
+			p, _ := e.Value.([]string)
+			res = append(res, p)
+		}
+		return
+	}
 	for queue.Len() > 0 {
 		path, _ = queue.Remove(queue.Front()).([]string)
+		log.Infof(ctx, "dequed: %v remaining: %v", path, scanQueue())
 		current = path[len(path)-1]
 		if current == to {
 			return path
 		}
 		for _, next := range adjacent[current] {
 			if !contains(path, next) {
+				log.Infof(ctx, "+ adding %v + %v to queue", path, next)
 				queue.PushBack(append(path, next))
+				log.Infof(ctx, " = resulting queue: %v", scanQueue())
 			}
 		}
 	}
